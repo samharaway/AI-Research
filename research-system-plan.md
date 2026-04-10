@@ -21,13 +21,15 @@
 - GitHub CLI authenticated as `samharaway` (Valtech account)
 - Vault folder scaffold created (`_shared/`, `Client/`, and all subfolders with README files)
 - Initial commit pushed to GitHub
-- `obsidian-mcp-setup` skill updated to V2 based on colleague feedback (binary install step, directory scoping, expanded troubleshooting)
+- `obsidian-mcp-setup` skill updated to V2 based on colleague feedback
+- Bootstrap skill (`/ux-research-setup`) written and committed to repo at `.claude/skills/ux-research-setup/SKILL.md`
+- **Phase 1 complete**
 
 ### In Progress
-- Phase 1: Foundation — bootstrap skill not yet written
+- Phase 2: First methodology — stakeholder interviews
 
 ### Next Step
-Write the bootstrap skill.
+Write the methods doc for stakeholder interviews, then build the study template.
 
 ---
 
@@ -63,6 +65,9 @@ Claude Code skills (`.claude/skills/`) and agents (`.claude/agents/`) encode res
 
 Skills and agents are **symlinked into each vault's `_shared/` folder** so researchers can review and reference them inside Obsidian without leaving the workspace.
 
+### Bootstrap skill distribution
+The bootstrap skill (`/ux-research-setup`) lives in the repo at `.claude/skills/ux-research-setup/SKILL.md`. When a colleague clones the repo and opens Claude Code from that directory, the skill is available as a project-level skill. It handles the full first-time setup: tools, GitHub auth, vault initialization, Obsidian plugins, MCP registration, and symlink infrastructure.
+
 ### Consistent study folder structure across all research methods
 All study types — stakeholder interviews, user interviews, usability tests, etc. — use the same top-level folder structure. Method-specific variation is handled by templates, not by changing the structure itself. This keeps agent behavior predictable and the researcher experience consistent.
 
@@ -76,7 +81,7 @@ The full system — vault template, skills, agents, methods docs, and bootstrap 
 **GitHub org:** `[PLACEHOLDER — resolve with Valtech IT]`
 
 ### MCP server directory scoping
-The `claude mcp add` command must be run from the same directory the user launches Claude Code from. If run from the wrong directory, the MCP server is registered to the wrong scope and won't appear. The bootstrap skill must ask users for their Claude workspace directory upfront and verify the `project:` path in the confirmation output.
+The `claude mcp add` command must be run from the same directory the user launches Claude Code from. If run from the wrong directory, the MCP server is registered to the wrong scope and won't appear. The bootstrap skill asks users for their Claude workspace directory upfront and verifies the `project:` path in the confirmation output.
 
 ### Multi-pass synthesis with human review
 Qualitative data synthesis is performed by agents trained in specific analytic techniques (e.g., qualitative coding, thematic analysis). Agents complete analysis in discrete passes, producing a reviewable output after each pass. The researcher reviews and confirms before the agent proceeds to the next pass. This approach is designed to:
@@ -90,6 +95,8 @@ Qualitative data synthesis is performed by agents trained in specific analytic t
 
 ```
 [Vault Root]/              ← one vault per client engagement
+  .claude/
+    skills/                ← project-level skills (including bootstrap skill)
   _shared/
     methods/               ← synthesis protocols, analysis frameworks (reusable across studies)
     templates/             ← blank scaffolding by study type (interview, usability test, etc.)
@@ -111,22 +118,22 @@ Qualitative data synthesis is performed by agents trained in specific analytic t
 
 The build phases below are a framework for iterative development, not a waterfall. The intended execution path is:
 
-1. Stand up the foundation (Phase 1)
+1. Stand up the foundation (Phase 1) ✓
 2. Build end-to-end for **one methodology first** as a proof of concept — including its methods doc, template, relevant skills, and agents (Phases 2–4)
 3. Iterate on that first methodology until the workflow is reliable
 4. Add additional methodologies one at a time using the same pattern
 
-### Phase 1: Foundation
+### Phase 1: Foundation ✓
 - [x] Create vault template (folder scaffold with README files)
 - [x] Set up GitHub repository
-- [ ] Write bootstrap skill — interactive setup guide covering: GitHub clone, Obsidian install, plugin setup (Local REST API + MCP Tools), MCP registration with Claude Code, vault initialization, symlink creation
+- [x] Write bootstrap skill (`/ux-research-setup`)
 
 ### Phase 2: Shared methodology layer (per methodology, repeat as needed)
-- [ ] Write methods doc for the methodology (synthesis protocol, analytic approach)
-- [ ] Build study template for the methodology (pre-populated folder scaffold)
+- [ ] Write methods doc for stakeholder interviews
+- [ ] Build study template for stakeholder interviews
 
 **Target methodologies (in intended build order):**
-- [ ] Stakeholder interviews
+- [ ] Stakeholder interviews ← starting here
 - [ ] User interviews
 - [ ] Concept evaluation
 - [ ] Usability testing
