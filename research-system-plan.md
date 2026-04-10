@@ -1,14 +1,14 @@
 # UX Research System — Planning Document
 
 **Status:** In progress  
-**Last updated:** 2026-04-08  
+**Last updated:** 2026-04-10  
 **Owner:** Sam Haraway, Valtech
 
 ---
 
 ## Current State
 
-*Last updated: 2026-04-08*
+*Last updated: 2026-04-10*
 
 ### Completed
 - Obsidian vault created at `~/AI-Research`
@@ -19,12 +19,15 @@
 - `.gitignore` added (excludes `.obsidian/` and `.DS_Store`)
 - Stale duplicate MCP server entry (`obsidian`) removed from Claude Code config
 - GitHub CLI authenticated as `samharaway` (Valtech account)
+- Vault folder scaffold created (`_shared/`, `Client/`, and all subfolders with README files)
+- Initial commit pushed to GitHub
+- `obsidian-mcp-setup` skill updated to V2 based on colleague feedback (binary install step, directory scoping, expanded troubleshooting)
 
 ### In Progress
-- Phase 1: Foundation — vault template folder scaffold not yet created; bootstrap skill not yet written; first commit not yet pushed
+- Phase 1: Foundation — bootstrap skill not yet written
 
 ### Next Step
-Create the vault folder scaffold, then do the first commit and push to GitHub.
+Write the bootstrap skill.
 
 ---
 
@@ -50,8 +53,10 @@ Obsidian is the primary interface for storing and navigating research artifacts.
 
 These two plugins work in tandem. Local REST API is the underlying transport; MCP Tools is the bridge to Claude Code's MCP protocol. Only one MCP server entry is registered with Claude Code (`obsidian-mcp-tools`).
 
+> **Known issue:** The MCP Tools binary is not always auto-generated on first enable. Users must check the plugin settings for an "Install Server" button and click it if present.
+
 ### One vault per client
-Each client engagement gets its own Obsidian vault. This maintains clear data boundaries, supports NDA compliance, and keeps client work fully isolated.
+Each client engagement gets its own Obsidian vault. This maintains clear data separation, supports NDA compliance, and keeps client work fully isolated.
 
 ### Skills and agents are global, not client-specific
 Claude Code skills (`.claude/skills/`) and agents (`.claude/agents/`) encode research methodology, which does not change per client. They are universal. What changes per study is the context and data passed to them.
@@ -69,6 +74,9 @@ The full system — vault template, skills, agents, methods docs, and bootstrap 
 
 **GitHub repo:** github.com/samharaway/AI-Research (private)  
 **GitHub org:** `[PLACEHOLDER — resolve with Valtech IT]`
+
+### MCP server directory scoping
+The `claude mcp add` command must be run from the same directory the user launches Claude Code from. If run from the wrong directory, the MCP server is registered to the wrong scope and won't appear. The bootstrap skill must ask users for their Claude workspace directory upfront and verify the `project:` path in the confirmation output.
 
 ### Multi-pass synthesis with human review
 Qualitative data synthesis is performed by agents trained in specific analytic techniques (e.g., qualitative coding, thematic analysis). Agents complete analysis in discrete passes, producing a reviewable output after each pass. The researcher reviews and confirms before the agent proceeds to the next pass. This approach is designed to:
@@ -109,9 +117,9 @@ The build phases below are a framework for iterative development, not a waterfal
 4. Add additional methodologies one at a time using the same pattern
 
 ### Phase 1: Foundation
-- [ ] Create vault template (folder scaffold with placeholder README files)
+- [x] Create vault template (folder scaffold with README files)
+- [x] Set up GitHub repository
 - [ ] Write bootstrap skill — interactive setup guide covering: GitHub clone, Obsidian install, plugin setup (Local REST API + MCP Tools), MCP registration with Claude Code, vault initialization, symlink creation
-- [ ] Set up GitHub repository to host the system
 
 ### Phase 2: Shared methodology layer (per methodology, repeat as needed)
 - [ ] Write methods doc for the methodology (synthesis protocol, analytic approach)
