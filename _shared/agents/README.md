@@ -1,10 +1,8 @@
 # Agents
 
-Symlinks to Claude Code agent files (`~/.claude/agents/*/AGENT.md`).
+Copies of Claude Code agent files. The originals live in `.claude/agents/` where Claude Code can find them. Copies are kept here so agents are visible and reviewable inside Obsidian.
 
-These files are not stored here — they live in `~/.claude/agents/` where Claude Code can find them. The symlinks make them visible and reviewable inside Obsidian without leaving the vault.
-
-To add a new symlink after creating an agent:
+When a new agent is created or updated, copy it here:
 ```
-ln -s ~/.claude/agents/<agent-name>/AGENT.md ~/AI-Research/_shared/agents/<agent-name>.md
+cp .claude/agents/<agent-name>/AGENT.md _shared/agents/<agent-name>.md
 ```

@@ -63,10 +63,10 @@ Each client engagement gets its own Obsidian vault. This maintains clear data se
 ### Skills and agents are global, not client-specific
 Claude Code skills (`.claude/skills/`) and agents (`.claude/agents/`) encode research methodology, which does not change per client. They are universal. What changes per study is the context and data passed to them.
 
-Skills and agents are **symlinked into each vault's `_shared/` folder** so researchers can review and reference them inside Obsidian without leaving the workspace.
+Skills and agents are **copied into each vault's `_shared/` folder** so researchers can review and reference them inside Obsidian without leaving the workspace. (Obsidian does not follow symlinks, so copies are used instead.)
 
 ### Bootstrap skill distribution
-The bootstrap skill (`/ux-research-setup`) lives in the repo at `.claude/skills/ux-research-setup/SKILL.md`. When a colleague clones the repo and opens Claude Code from that directory, the skill is available as a project-level skill. It handles the full first-time setup: tools, GitHub auth, vault initialization, Obsidian plugins, MCP registration, and symlink infrastructure.
+The bootstrap skill (`/ux-research-setup`) lives in the repo at `.claude/skills/ux-research-setup/SKILL.md`. When a colleague clones the repo and opens Claude Code from that directory, the skill is available as a project-level skill. It handles the full first-time setup: tools, GitHub auth, vault initialization, Obsidian plugins, and MCP registration.
 
 ### Consistent study folder structure across all research methods
 All study types — stakeholder interviews, user interviews, usability tests, etc. — use the same top-level folder structure. Method-specific variation is handled by templates, not by changing the structure itself. This keeps agent behavior predictable and the researcher experience consistent.
@@ -100,8 +100,8 @@ Qualitative data synthesis is performed by agents trained in specific analytic t
   _shared/
     methods/               ← synthesis protocols, analysis frameworks (reusable across studies)
     templates/             ← blank scaffolding by study type (interview, usability test, etc.)
-    skills/                ← symlinks to ~/.claude/skills/*/SKILL.md
-    agents/                ← symlinks to ~/.claude/agents/*/AGENT.md
+    skills/                ← copies of .claude/skills/*/SKILL.md (for Obsidian visibility)
+    agents/                ← copies of .claude/agents/*/AGENT.md (for Obsidian visibility)
   Client/
     _context/              ← SOW, stakeholder map, project goals, timelines, kick-off materials
     Studies/

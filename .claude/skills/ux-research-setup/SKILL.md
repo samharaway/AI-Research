@@ -262,16 +262,16 @@ File modified: /Users/yourname/.claude.json [project: /Users/yourname/{CLAUDE_WO
 
 ---
 
-## Phase 7: Set Up Symlink Infrastructure
+## Phase 7: Set Up Shared Folders
 
-The `_shared/skills/` and `_shared/agents/` folders display research skills and agents inside Obsidian. We'll set up the infrastructure now — as skills and agents are added to the system later, they'll be symlinked here so you can review them in Obsidian.
+The `_shared/skills/` and `_shared/agents/` folders display research skills and agents inside Obsidian. We'll set up the infrastructure now — as skills and agents are added to the system, copies will be placed here so you can review them in Obsidian.
 
 ```bash
 mkdir -p "{VAULT_PATH}/_shared/skills"
 mkdir -p "{VAULT_PATH}/_shared/agents"
 ```
 
-Explain: "These folders are ready to receive symlinks to research skills and agents as they're built. You don't need to do anything with them right now."
+Explain: "These folders are ready to receive skill and agent files as they're built. You don't need to do anything with them right now."
 
 ---
 

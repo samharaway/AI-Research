@@ -1,10 +1,8 @@
 # Skills
 
-Symlinks to Claude Code skill files (`~/.claude/skills/*/SKILL.md`).
+Copies of Claude Code skill files. The originals live in `.claude/skills/` where Claude Code can find them. Copies are kept here so skills are visible and reviewable inside Obsidian.
 
-These files are not stored here — they live in `~/.claude/skills/` where Claude Code can find them. The symlinks make them visible and reviewable inside Obsidian without leaving the vault.
-
-To add a new symlink after creating a skill:
+When a new skill is created or updated, copy it here:
 ```
-ln -s ~/.claude/skills/<skill-name>/SKILL.md ~/AI-Research/_shared/skills/<skill-name>.md
+cp .claude/skills/<skill-name>/SKILL.md _shared/skills/<skill-name>.md
 ```
