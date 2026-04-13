@@ -26,26 +26,50 @@ If you don't have Claude Code, ask a colleague or check with your team lead.
 
 ## Getting Started
 
-**Step 1 — Clone this repo**
+**Step 1 — Open Terminal**
 
-Open Terminal (Cmd+Space → type "Terminal" → Enter) and run:
+Press **Cmd+Space**, type **Terminal**, and press **Enter**.
+
+**Step 2 — Install prerequisites**
+
+You'll need Xcode Command Line Tools, Homebrew, and the GitHub CLI. Run each command below and follow any prompts.
+
+Check for Xcode Command Line Tools (required by Homebrew):
+
+```bash
+xcode-select --install
+```
+
+If a dialog appears asking to install, click **Install**. If the terminal prints "already installed", move on.
+
+Install Homebrew (a Mac package manager):
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+This will ask for your Mac password — the characters won't show as you type, that's normal. If it prints instructions to add Homebrew to your PATH at the end (lines starting with `echo` and `eval`), run those too.
+
+Install the GitHub CLI:
+
+```bash
+brew install gh
+```
+
+**Step 3 — Clone this repo**
 
 ```bash
 gh repo clone samharaway/AI-Research
 ```
 
-If `gh` isn't installed yet, don't worry — the setup guide will handle it.
-
-Alternatively, you can download the repo as a ZIP from github.com/samharaway/AI-Research and unzip it.
-
-**Step 2 — Open Claude Code from the repo folder**
+**Step 4 — Open Claude Code from the repo folder**
 
 ```bash
 cd AI-Research
 claude
 ```
 
-**Step 3 — Run the setup guide**
+**Step 5 — Run the setup guide**
 
 Once Claude Code is open, type:
 
