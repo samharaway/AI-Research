@@ -275,9 +275,43 @@ Explain: "These folders are ready to receive skill and agent files as they're bu
 
 ---
 
-## Phase 8: Verify the Connection
+## Phase 8: Install Skills Globally
 
-### 8a. Relaunch Claude Code
+Research skills need to be available from any directory, not just when Claude Code is launched from the vault folder. We do this by creating symlinks in `~/.claude/skills/` that point to the skill files in the vault.
+
+Explain: "We're going to make the research skills available system-wide so you can use them from any Claude Code session, not just when you're inside the vault folder."
+
+First, ensure the global skills directory exists:
+
+```bash
+mkdir -p ~/.claude/skills
+```
+
+Then create a symlink for each skill in the vault. For each folder inside `{VAULT_PATH}/.claude/skills/`, run:
+
+```bash
+ln -sf "{VAULT_PATH}/.claude/skills/ux-research-setup" ~/.claude/skills/ux-research-setup
+ln -sf "{VAULT_PATH}/.claude/skills/new-study" ~/.claude/skills/new-study
+ln -sf "{VAULT_PATH}/.claude/skills/import" ~/.claude/skills/import
+```
+
+The `-f` flag replaces any existing entry so this is safe to run again after a `git pull` adds new skills.
+
+Verify the symlinks were created:
+
+```bash
+ls -la ~/.claude/skills/
+```
+
+You should see `new-study`, `import`, and `ux-research-setup` listed with `→` arrows pointing to the vault path.
+
+> **Note:** Because these are symlinks to the vault, any time the vault is updated via `git pull`, the skills update automatically — no extra step needed.
+
+---
+
+## Phase 9: Verify the Connection
+
+### 9a. Relaunch Claude Code
 
 MCP servers load when Claude Code starts. Tell the user:
 
@@ -295,7 +329,7 @@ obsidian-mcp-tools · ✔ connected
 
 > **Troubleshooting "Failed to connect":** Make sure Obsidian is open. The MCP server requires Obsidian to be running.
 
-### 8b. Test the Connection
+### 9b. Test the Connection
 
 Once connected, ask Claude Code:
 
