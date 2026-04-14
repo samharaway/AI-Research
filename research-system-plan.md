@@ -1,14 +1,14 @@
 # UX Research System — Planning Document
 
 **Status:** In progress  
-**Last updated:** 2026-04-10  
+**Last updated:** 2026-04-14  
 **Owner:** Sam Haraway, Valtech
 
 ---
 
 ## Current State
 
-*Last updated: 2026-04-10*
+*Last updated: 2026-04-14*
 
 ### Completed
 - Obsidian vault created at `~/AI-Research`
@@ -24,12 +24,17 @@
 - `obsidian-mcp-setup` skill updated to V2 based on colleague feedback
 - Bootstrap skill (`/ux-research-setup`) written and committed to repo at `.claude/skills/ux-research-setup/SKILL.md`
 - **Phase 1 complete**
+- README updated with full pre-clone bootstrap steps (Xcode CLT, Homebrew, gh) so colleagues can onboard from a single document
+- `/new-study` skill written — initializes a study folder with standard subfolder structure and placeholder files for research plan and interview guide
+- `/import` skill written — handles transcripts (Teams HTML, DOCX, PDF) via 7-step cleaning pipeline, and context documents via conversion pipeline; routes to correct vault location
+- `_shared/skills/` populated with file copies of all skills for Obsidian visibility (symlinks don't work in Obsidian)
+- Bootstrap skill updated with Phase 8: installs research skills as global symlinks to `~/.claude/skills/` so they are available from any directory and auto-update on `git pull`
 
 ### In Progress
-- Phase 2: First methodology — stakeholder interviews
+- Phase 3: Skills — `/import` and `/new-study` complete; research planning and interview guide skills remaining
 
 ### Next Step
-Write the methods doc for stakeholder interviews, then build the study template.
+Test `/new-study` and `/import` with real study data. Then proceed to the research planning skill or return to Phase 2 (methodology docs and study template for stakeholder interviews).
 
 ---
 
@@ -64,6 +69,8 @@ Each client engagement gets its own Obsidian vault. This maintains clear data se
 Claude Code skills (`.claude/skills/`) and agents (`.claude/agents/`) encode research methodology, which does not change per client. They are universal. What changes per study is the context and data passed to them.
 
 Skills and agents are **copied into each vault's `_shared/` folder** so researchers can review and reference them inside Obsidian without leaving the workspace. (Obsidian does not follow symlinks, so copies are used instead.)
+
+Skills are also installed globally via symlinks from `~/.claude/skills/` pointing to the vault's `.claude/skills/` directory. This makes skills available from any Claude Code session regardless of working directory, and ensures they auto-update when the vault is updated via `git pull`. The bootstrap skill handles this installation in Phase 8.
 
 ### Bootstrap skill distribution
 The bootstrap skill (`/ux-research-setup`) lives in the repo at `.claude/skills/ux-research-setup/SKILL.md`. When a colleague clones the repo and opens Claude Code from that directory, the skill is available as a project-level skill. It handles the full first-time setup: tools, GitHub auth, vault initialization, Obsidian plugins, and MCP registration.
@@ -105,7 +112,7 @@ Qualitative data synthesis is performed by agents trained in specific analytic t
   Client/
     _context/              ← SOW, stakeholder map, project goals, timelines, kick-off materials
     Studies/
-      YYYY-[method]-[topic]/
+      TITLE-MM-YYYY/
         00-context/        ← research plan, interview guide, prior research context
         01-data/           ← transcripts and raw data stored as markdown files
         02-analysis/       ← agent pass outputs, coding, synthesis working notes
@@ -140,7 +147,8 @@ The build phases below are a framework for iterative development, not a waterfal
 - [ ] Additional methods TBD
 
 ### Phase 3: Skills (per methodology or cross-cutting)
-- [ ] Document import skill — convert PDFs, DOCX, and web pages to markdown and place in the correct vault folder
+- [x] Study initialization skill (`/new-study`) — creates study folder structure with placeholder files
+- [x] Document import skill (`/import`) — converts and cleans transcripts (Teams HTML, DOCX, PDF) and context documents; routes to correct vault location
 - [ ] Research planning skill — help structure a research plan for a given study
 - [ ] Interview guide skill — generate or refine interview guides based on research objectives
 - [ ] Additional skills TBD as research workflows mature
@@ -152,9 +160,9 @@ The build phases below are a framework for iterative development, not a waterfal
 - [ ] Additional agents TBD; all designed for multi-pass workflows with human review between passes
 
 ### Phase 5: Hardening and sharing
-- [ ] Test full setup flow with a colleague unfamiliar with the system
-- [ ] Refine bootstrap skill based on gaps found in testing
-- [ ] Document prerequisites (GitHub account, Mac, Obsidian)
+- [x] Document prerequisites — README now covers full pre-clone bootstrap (Xcode CLT, Homebrew, gh)
+- [x] Refine bootstrap skill based on gaps found in testing — Phase 8 added for global skill installation
+- [ ] Test full setup flow with a colleague unfamiliar with the system (partially tested — surfaced README gap, now fixed)
 - [ ] Resolve GitHub org placeholder
 
 ---
