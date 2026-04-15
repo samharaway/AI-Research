@@ -1,14 +1,14 @@
 # UX Research System — Planning Document
 
 **Status:** In progress  
-**Last updated:** 2026-04-14  
+**Last updated:** 2026-04-15  
 **Owner:** Sam Haraway, Valtech
 
 ---
 
 ## Current State
 
-*Last updated: 2026-04-14*
+*Last updated: 2026-04-15*
 
 ### Completed
 - Obsidian vault created at `~/AI-Research`
@@ -16,7 +16,7 @@
 - Planning document created in Obsidian (`research-system-plan.md`)
 - GitHub repo created at github.com/samharaway/AI-Research (private)
 - Local vault initialized as git repo and connected to remote
-- `.gitignore` added (excludes `.obsidian/` and `.DS_Store`)
+- `.gitignore` updated (excludes `.obsidian/`, `.DS_Store`, and `Client/` — participant data stays local)
 - Stale duplicate MCP server entry (`obsidian`) removed from Claude Code config
 - GitHub CLI authenticated as `samharaway` (Valtech account)
 - Vault folder scaffold created (`_shared/`, `Client/`, and all subfolders with README files)
@@ -29,12 +29,21 @@
 - `/import` skill written — handles transcripts (Teams HTML, DOCX, PDF) via 7-step cleaning pipeline, and context documents via conversion pipeline; routes to correct vault location
 - `_shared/skills/` populated with file copies of all skills for Obsidian visibility (symlinks don't work in Obsidian)
 - Bootstrap skill updated with Phase 8: installs research skills as global symlinks to `~/.claude/skills/` so they are available from any directory and auto-update on `git pull`
+- `/import` and `/new-study` tested with real study data (test-study-04-2026); first transcript successfully imported and cleaned
+- `/import` skill significantly improved based on real-use testing:
+  - Review and approval checkpoint added — presents all corrections, flags, and questions before saving
+  - Backchannel interjection removal — short interviewer responses mid-participant-turn are removed; ambiguous fragments flagged `[?]`
+  - Two-path cleaning pipeline: detects whether source transcript has speaker labels; labeled path standardizes existing labels; inferred path applies inference heuristics (question/answer patterns, name mentions, content context, turn length) followed by anti-collapse validation and name-mention disambiguation
+  - Transcript saves use the filesystem `Write` tool instead of Obsidian MCP — avoids timeouts on large files
+- `obsidian-mcp-setup` and `phase-complete` skills added to repo (were local-only previously)
+- Skill symlink architecture implemented: `~/.claude-personal/skills/` now contains symlinks to `.claude/skills/` in the repo; git is the single source of truth, personal instance auto-updates
+- README updated with current capabilities
 
 ### In Progress
-- Phase 3: Skills — `/import` and `/new-study` complete; research planning and interview guide skills remaining
+- Phase 3: Skills — `/import` and `/new-study` complete and tested; research planning and interview guide skills remaining
 
 ### Next Step
-Test `/new-study` and `/import` with real study data. Then proceed to the research planning skill or return to Phase 2 (methodology docs and study template for stakeholder interviews).
+Proceed to Phase 2 (methods doc and study template for stakeholder interviews) or continue Phase 3 with the research planning or interview guide skill.
 
 ---
 
@@ -72,6 +81,8 @@ Skills and agents are **copied into each vault's `_shared/` folder** so research
 
 Skills are also installed globally via symlinks from `~/.claude/skills/` pointing to the vault's `.claude/skills/` directory. This makes skills available from any Claude Code session regardless of working directory, and ensures they auto-update when the vault is updated via `git pull`. The bootstrap skill handles this installation in Phase 8.
 
+The personal Claude Code instance (`~/.claude-personal/skills/`) uses directory-level symlinks pointing directly to `.claude/skills/` in this repo. Editing a skill file in the repo updates both the project-level and personal-instance copies simultaneously. The `_shared/skills/` Obsidian copies remain separate files and must be kept in sync manually.
+
 ### Bootstrap skill distribution
 The bootstrap skill (`/ux-research-setup`) lives in the repo at `.claude/skills/ux-research-setup/SKILL.md`. When a colleague clones the repo and opens Claude Code from that directory, the skill is available as a project-level skill. It handles the full first-time setup: tools, GitHub auth, vault initialization, Obsidian plugins, and MCP registration.
 
@@ -79,7 +90,10 @@ The bootstrap skill (`/ux-research-setup`) lives in the repo at `.claude/skills/
 All study types — stakeholder interviews, user interviews, usability tests, etc. — use the same top-level folder structure. Method-specific variation is handled by templates, not by changing the structure itself. This keeps agent behavior predictable and the researcher experience consistent.
 
 ### External documents imported as markdown
-Client materials that originate elsewhere (SOWs, PDFs, DOCX files, web pages) are converted to markdown and stored in the vault. Direct integrations with client systems (SharePoint, Confluence, etc.) are explicitly out of scope — these vary per client and introduce dependencies that cannot be assumed. A document import skill will handle conversion.
+Client materials that originate elsewhere (SOWs, PDFs, DOCX files, web pages) are converted to markdown and stored in the vault. Direct integrations with client systems (SharePoint, Confluence, etc.) are explicitly out of scope — these vary per client and introduce dependencies that cannot be assumed. The `/import` skill handles conversion.
+
+### Client data is local-only
+The `Client/` directory is excluded from version control via `.gitignore`. Participant transcripts, study data, and other client materials live on the researcher's local machine only and are never pushed to GitHub. The repo tracks system infrastructure (skills, templates, methods docs, vault structure) but not research data.
 
 ### GitHub for distribution
 The full system — vault template, skills, agents, methods docs, and bootstrap skill — lives in a GitHub repository. Colleagues clone the repo to set up a new client vault. A GitHub account is a required prerequisite.
