@@ -3,3 +3,6 @@
 
 # macOS
 .DS_Store
+
+# Client data — lives locally only, not version controlled
+Client/

@@ -13,6 +13,30 @@ This system gives you:
 
 ---
 
+## Current Capabilities
+
+### `/import` — Import transcripts and context documents
+
+Imports interview transcripts (DOCX, PDF, Teams HTML) or context documents (research plans, interview guides) into the correct study folder.
+
+For transcripts, the pipeline:
+- Converts DOCX to markdown via pandoc
+- Collapses timestamp-fragmented lines from Teams exports
+- Standardizes speaker labels (interviewer and participant pseudonyms)
+- Removes interviewer backchannel interjections mid-participant-turn (e.g. "Yeah.", "Mm.", "OK.") — preserves them only at genuine turn boundaries
+- Corrects clear transcription errors; flags uncertain terms with `[?]`
+- Normalizes annotation markers (`[laughs]`, `[pause]`, `[inaudible]`, `[crosstalk]`, `[??]`)
+- Strips system preamble/postamble; preserves pre-interview small talk with a section marker
+- Presents a review checkpoint (corrections, flags, questions) before saving — requires explicit approval
+
+### `/new-study` — Create a new study folder
+
+Sets up a new study in `Client/Studies/` with the standard folder structure and placeholder files.
+
+---
+
+---
+
 ## Before You Start
 
 You'll need:

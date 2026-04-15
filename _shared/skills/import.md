@@ -125,6 +125,18 @@ Then read and parse the HTML output.
 **If PDF:**
 Read the file directly using the Read tool (provide page ranges for large files).
 
+### 4A-2b: Detect Speaker Labels
+
+Before cleaning, determine whether the source file contains speaker labels.
+
+**Labels present** — the transcript has a consistent pattern of named speaker prefixes on each turn (e.g. "Sam Haraway:", "Sara Sandbach:", or a Teams-style name/timestamp header per block). The cleaning pipeline can standardize these directly.
+
+**Labels absent** — the transcript reads as continuous prose or dialogue with no named prefixes. Speaker attribution must be inferred from context.
+
+**Partial labels** — some turns are labeled and others are not. Treat as absent: apply the inferred speaker pathway and note which turns were labeled vs. inferred in the review.
+
+Record this as `{LABEL_STATUS}`: `labeled` or `inferred`.
+
 ### 4A-3: Apply Transcript Cleaning Pipeline
 
 Process the raw content through all seven steps in order:
@@ -132,13 +144,45 @@ Process the raw content through all seven steps in order:
 **Step 1 — Collapse timestamp fragments**
 Merge lines that belong to the same speaker turn into a single continuous block. Teams transcripts often break a single utterance across multiple timestamped lines. Combine these before any other processing.
 
-**Step 2 — Standardize speaker labels**
-Normalize all speaker identifiers to a consistent format:
-- The interviewer → `**{INTERVIEWER}:**`
+**Step 2 — Speaker labels**
+
+*If `{LABEL_STATUS}` = labeled:*
+Standardize existing speaker identifiers to a consistent format:
+- The interviewer(s) → `**{INTERVIEWER}:**`
 - The participant → `**{PSEUDONYM}:**`
 - Any other speakers (observers, co-facilitators) → ask the user how to label them
 
-Remove email addresses, display names with inconsistent capitalization, and "Guest" labels. Every speaker turn must begin with one of the standardized labels.
+Remove email addresses, display names with inconsistent capitalization, and "Guest" labels. Every speaker turn must begin with one of the standardized labels. Then proceed to Step 2a.
+
+*If `{LABEL_STATUS}` = inferred:*
+No labels exist in the source. Infer speakers from the following signals, in order of reliability:
+
+1. **Question vs. answer structure** — Turns framed as open questions are almost always interviewers. Long narrative answers are almost always the participant.
+2. **Name mentions** — If a speaker addresses someone by name ("So sorry, Sam", "go ahead, Sohail"), that speaker is definitively not the named person. Use this to disambiguate between multiple interviewers.
+3. **Content context** — Interviewers introduce topics, redirect conversation, and probe on specific points. The participant describes their own experience, opinions, and context.
+4. **Turn length** — Participant turns tend to be longer and more narrative. Very short turns (≤5 words) in the middle of a participant's discussion are almost always interviewer acknowledgments, not new participant turns.
+
+Assign all turns a preliminary label, then proceed to Step 2b before Step 2a.
+
+**Step 2b — Validate inferred attributions** *(inferred path only — skip if labeled)*
+
+After assigning preliminary labels, apply these checks to catch common inference errors:
+
+*Anti-collapse check:*
+Review every multi-sentence block attributed to the participant. Flag and split any block that contains:
+- A direct question followed immediately by a direct answer — one person rarely both asks and answers in the same turn
+- Acknowledgment tokens ("Right.", "OK.", "Gotcha.", "Exactly.", "Yeah, yeah.") appearing mid-block and followed by new content from a different angle — these are typically the interviewer responding, not the participant continuing
+- Turn-repair phrases suggesting the speaker is correcting their own prior question (e.g., "no, maybe I'm not asking that right") — this belongs to the interviewer, not the participant
+
+When any of these signals appear in a participant block, split the block and re-attribute the flagged segments.
+
+*Name-mention disambiguation:*
+Review all turns initially labeled generic `**Interviewer:**`. If a turn contains a phrase like "Sorry, Sam" or "go ahead, Sohail", the speaker of that turn is definitively not the named person — reassign to the other named interviewer where the attribution is now clear. Turns that remain ambiguous after this check stay as `**Interviewer:**` and are added to the uncertain-attributions list for Step 4A-5.
+
+**Step 2a — Remove backchannel interjections**
+Remove short interviewer/moderator responses (1–5 words: "Yeah.", "Mm.", "Hmm.", "OK.", "Right.", "Uh-huh.", etc.) that fall within a participant's extended speaking turn. These are active listening signals and should not interrupt the participant's narrative. Keep them only when they mark a genuine turn boundary — where the participant has stopped, the interviewer responds, and a new exchange begins.
+
+Exception: short fragments that look like truncated words or mid-sentence cuts (e.g. "And.", "So.", "St.", "Miss.") should be flagged `[?]` rather than silently removed, as they may indicate a transcription error rather than a backchannel.
 
 **Step 3 — Correct transcription errors**
 Read the full transcript for words that are clearly wrong — names of drugs, medical terms, company names, or common words that were misheard. Correct these where the intended word is unambiguous from context. Be conservative: only correct when confident. Do not paraphrase or rephrase. Change the minimum necessary.
@@ -190,13 +234,49 @@ Structure the cleaned transcript as follows:
 {cleaned transcript content}
 ```
 
-### 4A-5: Save to Vault
+If `{LABEL_STATUS}` = inferred, insert the following note between the metadata block and the `---` divider:
 
-Use the Obsidian MCP tools to create the file at:
+```markdown
+> **Note on speaker attribution:** The source file contained no speaker labels. Attribution below was inferred from context (question/answer patterns, name mentions, content). Turns marked **Interviewer:** could not be attributed to a specific interviewer.
+```
+
+### 4A-5: Review and Approval
+
+Before saving, present a review summary to the user and wait for explicit approval:
+
+> "Before I save, here's what I changed and flagged. Please confirm or correct anything.
+>
+> **Questions for you:**
+> - [any questions requiring user input before the file can be finalized — date discrepancies, unknown speakers, ambiguous content, etc.]
+>
+> **Corrections made:**
+> - [original] → [corrected] — [reason]
+> - (list each correction)
+>
+> **Flagged with [?] (uncertain — please verify):**
+> - [word or phrase] at ~[timestamp] — [reason for uncertainty]
+> - (list each)
+>
+> **Backchannels removed:**
+> - [N] short interviewer interjections removed mid-participant-turn
+>
+> **Speaker attributions flagged as uncertain** *(inferred transcripts only — omit if labeled):*
+> - [turn excerpt] at ~[timestamp] — [reason for uncertainty]
+> - (list each; or "None — all turns attributed with reasonable confidence")
+>
+> OK to save, or any corrections before I do?"
+
+Do not proceed to 4A-6 until the user confirms. If the user provides corrections, apply them and re-present the relevant items before saving.
+
+### 4A-6: Save to Vault
+
+Write the file directly to the filesystem at:
 
 ```
 {STUDY_PATH}/01-data/{PSEUDONYM}-session-{SESSION_NUM}.md
 ```
+
+Use the `Write` tool (not the Obsidian MCP `create_vault_file`). The vault is on the local filesystem and Obsidian will pick up the file automatically. MCP `create_vault_file` should only be used for short files — it times out on large transcripts.
 
 Confirm with the user:
 
