@@ -129,7 +129,7 @@ Read the file directly using the Read tool (provide page ranges for large files)
 
 Before cleaning, determine whether the source file contains speaker labels.
 
-**Labels present** — the transcript has a consistent pattern of named speaker prefixes on each turn (e.g. "Sam Haraway:", "Sara Sandbach:", or a Teams-style name/timestamp header per block). The cleaning pipeline can standardize these directly.
+**Labels present** — the transcript has a consistent pattern of named speaker prefixes on each turn (e.g. "Sam Haraway:", "Mona Lisa:", or a Teams-style name/timestamp header per block). The cleaning pipeline can standardize these directly.
 
 **Labels absent** — the transcript reads as continuous prose or dialogue with no named prefixes. Speaker attribution must be inferred from context.
 
