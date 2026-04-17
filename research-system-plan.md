@@ -40,10 +40,11 @@
 - README updated with current capabilities
 
 ### In Progress
-- Phase 3: Skills — `/import` and `/new-study` complete and tested; research planning and interview guide skills remaining
+- Phase 3: Skills — `/import`, `/new-study`, and `/analyze` complete; research planning and interview guide skills remaining
+- Phase 4: Analysis — `/analyze` skill written; needs testing with real transcript data; supporting materials deferred until after testing
 
 ### Next Step
-Proceed to Phase 2 (methods doc and study template for stakeholder interviews) or continue Phase 3 with the research planning or interview guide skill.
+Test `/analyze` with real transcript data. Then proceed to Phase 2 (methods doc and study template for stakeholder interviews) or continue Phase 3 with remaining skills.
 
 ---
 
@@ -167,11 +168,10 @@ The build phases below are a framework for iterative development, not a waterfal
 - [ ] Interview guide skill — generate or refine interview guides based on research objectives
 - [ ] Additional skills TBD as research workflows mature
 
-### Phase 4: Agents (per methodology, repeat as needed)
-- [ ] Qualitative coding agent — first-pass open coding of interview transcripts
-- [ ] Thematic analysis agent — identify and organize themes across coded data
-- [ ] Insight writing agent — draft insight statements from synthesized themes
-- [ ] Additional agents TBD; all designed for multi-pass workflows with human review between passes
+### Phase 4: Analysis
+- [x] `/analyze` skill written — implements Structured Affinity Coding, a five-pass technique combining affinity mapping and thematic coding. Replaces the three originally planned agents (qualitative coding, thematic analysis, insight writing) with a single skill that handles all passes. Inter-rater reliability achieved via three parallel agents in Passes 2 and 3 with automated convergence documents. Works across methodologies.
+- [ ] Supporting materials: REFERENCE.md (methodology depth), EXAMPLES.md (worked example), TEMPLATE.md (blank output templates) — deferred until skill is tested with real data
+- [ ] Test `/analyze` with real transcript data
 
 ### Phase 5: Hardening and sharing
 - [x] Document prerequisites — README now covers full pre-clone bootstrap (Xcode CLT, Homebrew, gh)
