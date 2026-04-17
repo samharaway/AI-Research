@@ -10,25 +10,165 @@ The technique draws from **affinity mapping** (UX design/research) and **themati
 
 ## Initial Proposal: Structured Affinity Coding
 
-A hybrid technique combining the bottom-up clustering logic of affinity mapping with the evidence-trail discipline of thematic coding. Originally proposed as four passes:
+A four-pass hybrid that takes the evidence-trail discipline of thematic coding and the bottom-up clustering logic of affinity mapping. Each pass produces a reviewable artifact; the researcher approves before the next pass runs.
 
-1. **Observation Extraction** — Extract discrete observations from transcripts with verbatim quotes
-2. **Open Coding** — Assign descriptive codes; three parallel agents for inter-rater reliability
-3. **Theme Formation** — Cluster codes into themes; three parallel agents with convergence
-4. **Insight Synthesis** — Translate themes into actionable insight statements
+### Why hybrid, not one or the other
 
-**Original design choices established:**
-- Single skill across methodologies
-- Multi-pass with human review between each pass
-- Three parallel agents on interpretive passes (2 and 3) with automated convergence documents
-- Quotation integrity as a hard rule (verbatim, 100% match, no fabrication)
-- Research objectives from `00-context/` as a sensitizing frame (objective-aligned vs. emergent themes)
-- Business value as an axis of insight significance alongside evidence strength
-- Business context drawn from both project-level (`Client/_context/`) and study-level (`{study}/00-context/`)
-- User type / persona as a dimension threaded through every pass
-- Interactive setup step to confirm research objectives, transcripts, coding approach, and persona mapping
-- Coding approach as researcher choice (inductive, deductive+inductive, hybrid)
-- Incremental commitment — researcher can stop after any pass
+**Affinity mapping** is fast and intuitive but under-structured for AI-assisted work — it relies on spatial reasoning, physical manipulation, and implicit researcher judgment that doesn't translate well to a text-based agent workflow. Its strength is the inductive clustering step: start with discrete observations, group by similarity, let themes emerge.
+
+**Thematic coding** provides the structure AI needs — explicit codes, codebooks, defined evidence links — but its full academic form (Braun & Clarke six-phase, for example) is heavier than consulting UX research typically requires. Its strength is the audit trail: every insight traces back through theme, code, and quote to a specific moment in a specific transcript.
+
+The hybrid takes **clustering from affinity mapping** and **evidence grounding from thematic coding**, producing outputs that are rigorous enough to withstand stakeholder scrutiny but practical enough for consulting timelines.
+
+### Hard Rule: Quotation Integrity
+
+All quotations surfaced in the analysis must be **verbatim passages** copied directly from the source transcripts. This is a non-negotiable rule enforced across all passes:
+
+- Quotations must never be invented, paraphrased, summarized, adjusted, or cleaned up in any way
+- Every word, punctuation mark, and formatting element must match the source transcript exactly
+- If a quote is truncated, the omission must be marked with `[...]`
+- Every quotation must include participant ID and sufficient location information (turn/line reference) for the researcher to find and verify it in the source transcript
+- If the researcher looks up a quoted passage in the original transcript, there must be a **100% match**
+
+This rule exists as a safeguard against AI hallucination. The analysis skill instructions must treat quotation fabrication as a critical failure mode, not a soft preference.
+
+### Setup Step: Study Context Confirmation
+
+Before analysis begins, the skill runs an interactive setup that establishes the analytic lens for the study. This step reads available context and confirms it with the researcher.
+
+**The skill reads from two levels:**
+- **Project context** (`Client/_context/`) — SOW, project briefs, stakeholder maps, business goals, and other documents that define the overall engagement scope and objectives
+- **Study context** (`{study}/00-context/`) — research plan, interview guide, and any study-specific context documents
+
+**The skill then asks the researcher to confirm:**
+
+1. **Research objectives** — Displays the objectives found in the research plan and asks the researcher to confirm, edit, or supplement them. These objectives will guide theme formation and insight prioritization.
+2. **Transcripts for analysis** — Lists all transcripts found in `01-data/` and asks the researcher to confirm which ones to include. (All by default, but the researcher may exclude incomplete or off-topic sessions.)
+3. **Coding approach** — Presents the three options (inductive, deductive+inductive, hybrid). If the researcher selects deductive+inductive, prompts them to identify or provide the predefined codebook.
+4. **User types / personas** — Displays any user types or personas identified in the research plan or context documents. Asks the researcher to confirm the participant-to-persona mapping (e.g., P01 = Clinical Operations, P02 = Data Scientist). If no personas are defined, asks whether participant segmentation is relevant for this study.
+
+This setup step is critical because it front-loads the interpretive decisions that shape every subsequent pass. The researcher's confirmations become the authoritative configuration for the analysis run.
+
+### Sensitizing Frames: Research Objectives and Business Context
+
+**Research objectives and interview guide**
+
+Analysis is not purely inductive. Before any coding begins, the skill reads the study's `00-context/` folder to load:
+- **Research objectives** from the research plan — what questions is this study trying to answer?
+- **Interview guide questions** — what specific topics were explored?
+
+These act as a **sensitizing frame** during theme formation (Pass 3): themes that align with research objectives are expected and should be evaluated for how well the data answers the original questions. Themes that fall *outside* the research objectives should still be captured but flagged as **emergent** — unexpected patterns the data revealed that weren't part of the original inquiry.
+
+**Business value axis**
+
+Since this system serves consulting UX research (not academia), insight significance is evaluated along two dimensions:
+
+1. **Strength of evidence** — How many participants? How consistent is the pattern? How vivid is the supporting data?
+2. **Business relevance** — What are the implications for product decisions, strategy, or stakeholder priorities? Does this theme connect to the business goals of the engagement?
+
+An insight that is "interesting" but disconnected from business value carries less weight as a key takeaway than one with clear implications for the product, feature, or strategy under evaluation.
+
+**Business context sources:**
+- **Project-level** (`Client/_context/`) — SOW, project briefs, business goals, stakeholder priorities. These define the broader engagement context and what the client cares about.
+- **Study-level** (`{study}/00-context/`) — Research plan framing, any study-specific business context.
+
+Both levels are loaded during the setup step and inform the business relevance assessment in Pass 4.
+
+### The Four Passes (as originally proposed)
+
+**Pass 1: Observation Extraction (single agent)**
+
+Read each transcript and extract discrete observations. An observation is a standalone factual statement about something the participant said, experienced, described, or demonstrated. Each observation captures one idea — if a participant's turn covers multiple topics, it produces multiple observations.
+
+Per observation, record:
+
+| Field | Description |
+|---|---|
+| ID | Sequential (e.g., OBS-001) |
+| Participant | Participant ID (e.g., P01) |
+| User type | Persona or archetype this participant belongs to (from setup step) |
+| Observation | 1-2 sentence summary in the researcher's voice |
+| Quote | Verbatim supporting quote from the transcript (see Quotation Integrity rule) |
+| Location | Participant ID + approximate turn/line reference in source transcript |
+
+Scope: All transcripts in the study are processed in a single pass. Output: one file per transcript in `02-analysis/`, plus a combined observations file across all transcripts.
+
+This pass is not interpretation. Observations should be descriptive and grounded — "P01 found the upload process slow because files had to be added one at a time" rather than "P01 was frustrated with the tool."
+
+Human review: Researcher scans observations for accuracy, completeness, and appropriate granularity. **Critically: spot-check quotations against source transcripts for verbatim accuracy.**
+
+**Pass 2: Open Coding (three parallel agents + convergence)**
+
+Review all observations across transcripts and assign descriptive codes. Before this pass begins, the researcher selects a coding approach:
+
+1. **Inductive only** — All codes emerge from the data. No predefined code list. Best when the study is exploratory and the researcher wants to avoid biasing the analysis.
+2. **Deductive + inductive** — Start with a predefined code list (from a prior study, research hypotheses, or framework) and apply it first. Then open-code anything the predefined codes don't capture.
+3. **Hybrid** — Derive initial seed codes from the research objectives and interview guide questions, then supplement with open inductive coding.
+
+Process (per agent): Work through the combined observation list. For each observation, assign one or more codes (short labels, 2-5 words). When a new concept appears, create a new code with a brief definition. After all observations are coded, review for redundancies.
+
+Output per agent: Coded observation table + working codebook (codes with definitions, observation counts, user type distribution per code).
+
+Convergence step: After all three agents complete, produce a comparison document showing agreement zones, divergence zones, and unique codes.
+
+Human review: Researcher reviews the convergence document and makes final decisions: which codes to keep, merge, rename, or discard. Produces the authoritative codebook for Pass 3.
+
+**Pass 3: Theme Formation (three parallel agents + convergence)**
+
+Cluster codes into themes — the core affinity mapping step applied to codes rather than raw observations. Group codes that together describe a larger pattern, behavior, need, or tension.
+
+Sensitizing frame: Agents reference the research objectives and interview guide when forming themes. Themes that address research objectives directly are expected. Themes that emerge outside the research questions are flagged as **emergent findings**.
+
+For each theme, write: theme name (descriptive phrase), theme description (2-3 sentences), objective alignment, constituent codes, prevalence, user type breakdown (which user types contribute, whether the pattern is universal or group-specific), and key evidence (2-3 representative verbatim quotes).
+
+Flag **cross-group themes** (shared across user types), **group-specific themes** (concentrated in one user type), and **divergent themes** (different user types have opposing experiences).
+
+Convergence step: Comparison document showing shared themes, divergent groupings, unique themes, and structural differences.
+
+Human review: Researcher settles the theme structure and produces the authoritative theme map. This is the most critical review checkpoint.
+
+**Pass 4: Insight Synthesis (single agent)**
+
+Translate themes into actionable insight statements. An insight is a concise claim about users, their context, or their needs, grounded in the evidence.
+
+Per insight, record:
+
+| Field | Description |
+|---|---|
+| Insight | A clear, specific statement (1-2 sentences) |
+| Supporting theme(s) | Which theme(s) this insight draws from |
+| Objective alignment | Which research objective(s) this addresses, or "Emergent" |
+| User type scope | Universal, group-specific (which group), or comparative (the contrast is the finding) |
+| Strength of evidence | How many participants, how consistent the pattern |
+| Business relevance | Connection to product goals, strategy, or stakeholder priorities |
+| Key quotes | 2-3 representative verbatim quotes |
+| Implications | What this means for design, product, or strategy |
+
+Significance ranking: Insights ordered by overall significance, weighing both evidence strength and business relevance. The insight synthesis actively looks for comparative patterns between user types.
+
+### Original Key Design Choices
+
+1. **Single skill, multiple methodologies.** Method-agnostic; operates on cleaned transcripts regardless of source methodology.
+2. **Multi-pass with human review.** Each pass has defined input, output, and review checkpoint.
+3. **Inter-rater reliability via parallel agents.** Passes 2 and 3 run three independent agents with convergence documents.
+4. **Auditable evidence trail.** Insight -> theme -> codes -> observations -> quotes -> transcript location. Verbatim quotation guarantee.
+5. **Incremental commitment.** Researcher can stop after any pass.
+6. **Research-objective-aware.** Distinguishes expected themes from emergent findings.
+7. **Business-value-weighted.** Insight significance considers both evidence strength and business relevance.
+8. **Coding approach as researcher choice.** Inductive, deductive+inductive, or hybrid.
+9. **User type as an analytical dimension.** Threaded through every pass.
+10. **Interactive setup step.** Front-loads interpretive decisions.
+
+### Original Resolved Decisions
+
+| Question | Decision |
+|---|---|
+| Pass scope | All transcripts processed at once per pass |
+| Parallel agents | Passes 2 and 3 run three agents; Passes 1 and 4 single agent |
+| Convergence method | Automated comparison document; researcher makes final decisions |
+| Coding approach | Researcher chooses from three options before Pass 2 |
+| Cross-study analysis | Self-contained per study for now; design outputs for future cross-study comparison |
+| Output format | Markdown for now; evaluate export formats based on actual downstream needs |
 
 ---
 
